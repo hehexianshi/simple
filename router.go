@@ -73,6 +73,7 @@ func (r *Router) handle(method string, pattern string, handle Handle) *Route {
 	var leaf *Leaf
 
 	if leaf = r.getLeaf(method, pattern); leaf != nil {
+		fmt.Println(pattern)
 		return &Route{r, leaf}
 	}
 
@@ -104,6 +105,7 @@ func (r *Router) handle(method string, pattern string, handle Handle) *Route {
 
 }
 
+// client 入口
 func (r *Router) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if t, ok := r.routers[req.Method]; ok {
 		leaf := r.getLeaf(req.Method, req.URL.Path)
@@ -113,10 +115,13 @@ func (r *Router) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 
 		h, p, ok := t.Match(req.URL.EscapedPath())
+
 		if ok {
 			if splat, ok := p["*0"]; ok {
 				p["*"] = splat
 			}
+
+			// 调用 handle, 路由绑定
 			h(rw, req, p)
 			return
 		}
@@ -167,7 +172,6 @@ func NewRouteMap() *routeMap {
 func (rm *routeMap) getLeaf(method, pattern string) *Leaf {
 	rm.lock.RLock()
 	defer rm.lock.RUnlock()
-	fmt.Println(rm.routes)
 	return rm.routes[method][pattern]
 }
 

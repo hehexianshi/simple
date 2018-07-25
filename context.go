@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	//"fmt"
+	"fmt"
 
 	"github.com/go-macaron/inject"
 )
@@ -51,6 +51,7 @@ func (c *Context) Written() bool {
 // use 之后 c.handlers
 // 任何中间件 都是 handler
 func (c *Context) run() {
+	fmt.Println(c.params)
 	for c.index <= len(c.handlers) {
 		vals, err := c.Invoke(c.handler())
 

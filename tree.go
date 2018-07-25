@@ -72,6 +72,7 @@ func checkPattern(pattern string) (typ patternType, rawPattern string, wildcards
 	} else if strings.Contains(pattern, ":") {
 		typ = _PATTERN_REGEXP
 		pattern, wildcards = getWilcards(pattern)
+
 		if pattern == "(.+)" {
 			typ = _PATTERN_HODLER
 		} else {
@@ -107,7 +108,7 @@ func isSpecialRegexp(pattern, regStr string, pos []int) bool {
 	return len(pattern) >= pos[1]+len(regStr) && pattern[pos[1]:pos[1]+len(regStr)] == regStr
 }
 
-// 找个才是找通配符的 核心代码
+// 这个才是找通配符的 核心代码
 // 如果没找到 要的 通配符。直接返回
 //func (re *Regexp) FindStringIndex(s string) (loc []int)
 // 找到的话 将通配符转化成 正则表达式
@@ -132,7 +133,6 @@ func getNextWildcard(pattern string) (wildcard, _ string) {
 		}
 	}
 
-	fmt.Println(wildcard)
 	return wildcard, pattern[:pos[0]] + pattern[pos[1]:]
 }
 
@@ -188,6 +188,7 @@ func NewLeaf(parent *Tree, pattern string, handle Handle) *Leaf {
 		optional = true
 	}
 
+	fmt.Println(parent, typ, pattern, rawPattern, wildcards, reg, optional, handle)
 	return &Leaf{parent, typ, pattern, rawPattern, wildcards, reg, optional, handle}
 }
 
@@ -245,6 +246,7 @@ func (t *Tree) Match(url string) (Handle, Params, bool) {
 
 	params := make(Params)
 	handle, ok := t.matchNextSegment(0, url, params)
+	fmt.Println(handle, params, ok)
 	return handle, params, ok
 }
 
